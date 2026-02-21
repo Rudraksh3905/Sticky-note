@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Beautiful Sticky Notes</title>
+
+<style>
+body{
+    background: linear-gradient(135deg,#2d708e,#97580f);
+    font-family: Arial, Helvetica, sans-serif;
+    margin:0;
+    padding:20px;
+}
+
+#box{
+    display:flex;
+    flex-wrap:wrap;
+    gap:20px;
+}
+
+.sticky{
+    width:250px;
+    height:320px;
+    background:white;
+    border-radius:15px;
+    box-shadow:0 10px 25px rgba(0,0,0,0.2);
+    display:flex;
+    flex-direction:column;
+    overflow:hidden;
+    animation:fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn{
+    from{transform:scale(0.9); opacity:0;}
+    to{transform:scale(1); opacity:1;}
+}
+
+.header{
+    height:40px;
+    background:#f8f9fa;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:0 10px;
+    font-weight:bold;
+}
+
+.header span{
+    cursor:pointer;
+    font-size:20px;
+}
+
+.content{
+    flex:1;
+    padding:10px;
+}
+
+textarea{
+    width:100%;
+    height:150px;
+    border:none;
+    resize:none;
+    outline:none;
+    font-size:15px;
+}
+
+.save-btn{
+    width:100%;
+    padding:8px;
+    border:none;
+    background:#107e85;
+    color:white;
+    border-radius:8px;
+    cursor:pointer;
+    margin-top:8px;
+}
+
+.footer{
+    padding:8px;
+    text-align:center;
+    background:#f1f1f1;
+}
+
+.footer button{
+    padding:5px 10px;
+    margin:2px;
+    border:none;
+    border-radius:6px;
+    cursor:pointer;
+    background:#0c7994;
+    color:white;
+}
+
+.create-btn{
+    padding:12px 20px;
+    font-size:18px;
+    background:white;
+    border:none;
+    border-radius:10px;
+    cursor:pointer;
+    margin-bottom:20px;
+}
+</style>
+</head>
+
+<body>
+
+<button class="create-btn" onclick="create()">➕ Create Note</button>
+<div id="box"></div>
+
+<script>
+function create(){
+    let block=document.createElement("div")
+    block.className="sticky"
+
+    block.innerHTML=`
+        <div class="header">
+            <span onclick="create()">＋</span>
+            <span onclick="this.closest('.sticky').remove()">✖</span>
+        </div>
+        <div class="content">
+            <textarea placeholder="Write something..."></textarea>
+            <button class="save-btn" onclick="save(this)">Save</button>
+        </div>
+        <div class="footer">
+            <button onclick="format(this,'bold')">Bold</button>
+            <button onclick="format(this,'italic')">Italic</button>
+        </div>
+    `
+    document.getElementById("box").appendChild(block)
+}
+
+function save(btn){
+    let content=btn.parentNode
+    let text=content.querySelector("textarea")
+    let p=document.createElement("p")
+    p.innerHTML=text.value
+    p.style.margin="0"
+    content.replaceChild(p,text)
+    btn.remove()
+}
+
+function format(btn,type){
+    let block=btn.closest(".sticky")
+    let textarea=block.querySelector("textarea")
+    if(!textarea) return
+
+    if(type=="bold"){
+        textarea.style.fontWeight="bold"
+    }else{
+        textarea.style.fontStyle="italic"
+    }
+}
+</script>
+
+</body>
+</html>
