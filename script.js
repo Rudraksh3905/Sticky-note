@@ -43,4 +43,5 @@ function format(btn, type){
     } else {
         textarea.style.fontStyle = "italic"
     }
+
 }
