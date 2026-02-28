@@ -1,47 +1,95 @@
-function create(){
-    let block = document.createElement("div")
-    block.className = "sticky"
+document.addEventListener("DOMContentLoaded", () => {
+    const box = document.getElementById("box")
 
-    block.innerHTML = `
-        <div class="header">
-            <span onclick="create()">＋</span>
-            <span onclick="this.closest('.sticky').remove()">✖</span>
-        </div>
-        <div class="content">
-            <textarea placeholder="Write something..."></textarea>
-            <button class="save-btn" onclick="save(this)">Save</button>
-        </div>
-        <div class="footer">
-            <button onclick="format(this,'bold')">Bold</button>
-            <button onclick="format(this,'italic')">Italic</button>
-        </div>
-    `
+    // Create first sticky if you want
+    createSticky()
 
-    document.getElementById("box").appendChild(block)
-}
+    function createSticky() {
+        const block = document.createElement("div")
+        block.className = "sticky"
 
-function save(btn){
-    let content = btn.parentNode
-    let text = content.querySelector("textarea")
-    let p = document.createElement("p")
+        block.innerHTML = `
+            <div class="header">
+                <span class="add">＋</span>
+                <span class="delete">✖</span>
+            </div>
+            <div class="content">
+                <textarea placeholder="Write something..."></textarea>
+                <button class="save-btn">Save</button>
+            </div>
+            <div class="footer">
+                <button class="bold-btn">Bold</button>
+                <button class="italic-btn">Italic</button>
+            </div>
+        `
 
-    p.innerHTML = text.value
-    p.style.margin = "0"
+        box.appendChild(block)
 
-    content.replaceChild(p, text)
-    btn.remove()
-}
+        // === ELEMENTS ===
+        const addBtn = block.querySelector(".add")
+        const deleteBtn = block.querySelector(".delete")
+        const saveBtn = block.querySelector(".save-btn")
+        const boldBtn = block.querySelector(".bold-btn")
+        const italicBtn = block.querySelector(".italic-btn")
 
-function format(btn, type){
-    let block = btn.closest(".sticky")
-    let textarea = block.querySelector("textarea")
+        // === EVENTS ===
 
-    if(!textarea) return
+        // Create new sticky
+        addBtn.addEventListener("click", createSticky)
 
-    if(type === "bold"){
-        textarea.style.fontWeight = "bold"
-    } else {
-        textarea.style.fontStyle = "italic"
+        // Delete sticky
+        deleteBtn.addEventListener("click", () => {
+            block.remove()
+        })
+
+        // Save / Edit toggle
+        saveBtn.addEventListener("click", () => {
+            const textarea = block.querySelector("textarea")
+            const paragraph = block.querySelector("p")
+
+            // If textarea exists → Save
+            if (textarea) {
+                const p = document.createElement("p")
+                p.textContent = textarea.value
+                p.style.margin = "0"
+
+                block.querySelector(".content").replaceChild(p, textarea)
+                saveBtn.textContent = "Edit"
+            } 
+            // If paragraph exists → Edit
+            else if (paragraph) {
+                const ta = document.createElement("textarea")
+                ta.value = paragraph.textContent
+
+                block.querySelector(".content").replaceChild(ta, paragraph)
+                saveBtn.textContent = "Save"
+            }
+        })
+
+        // Format Function
+        function format(type) {
+            const element =
+                block.querySelector("textarea") ||
+                block.querySelector("p")
+
+            if (!element) return
+
+            if (type === "bold") {
+                element.style.fontWeight =
+                    element.style.fontWeight === "bold"
+                        ? "normal"
+                        : "bold"
+            }
+
+            if (type === "italic") {
+                element.style.fontStyle =
+                    element.style.fontStyle === "italic"
+                        ? "normal"
+                        : "italic"
+            }
+        }
+
+        boldBtn.addEventListener("click", () => format("bold"))
+        italicBtn.addEventListener("click", () => format("italic"))
     }
-
-}
+})
